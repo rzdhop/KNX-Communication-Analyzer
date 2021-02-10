@@ -19,12 +19,11 @@ class logs:
 
         self.path = path
 
-        # try:
-        os.mkdir(path)
-        # except OSError:
-        # messagebox.showerror(title="Err", message="Creation Failed")
-        # else:
-        #     print("Creation Successfully")
+        try:
+            if not os.path.exists(path):
+                os.mkdir(path)
+        except OSError:
+            messagebox.showerror(title="Err", message="Creation Failed")
 
     def err(self, err: str = None):
         """
