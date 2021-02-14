@@ -8,8 +8,8 @@ class logs:
 
     def __init__(self, path: str = None):
         """
-        Initialisation du path repo des logs
-        Si il n'y a pas de chemin initialisé prends un chemin relatif
+        Initialization of the logs repo path
+        If there is no initialized path, take a relative path.
         """
 
         if path == None:
@@ -27,7 +27,7 @@ class logs:
 
     def err(self, err: str = None):
         """
-        Méthode permettant de log l'erreur
+        Method to log the error
         """
         print(err)
 
@@ -37,7 +37,7 @@ class logs:
             date = datetime.datetime.now()
 
             if err == None:
-                err = "Erreur Inconnu"
+                err = "Unknown error"
 
             messagebox.showerror(title="Err", message=err)
 
@@ -51,7 +51,7 @@ class logs:
 
     def info(self, info: str):
         """
-        Méthode permettant de log l'info
+        Method for logging information
         """
 
         print(info)
