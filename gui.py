@@ -51,6 +51,12 @@ class Fenetre_principale(QMainWindow):
         helpMenu = menuBar.addMenu(QIcon(""), "&Help")
 
 
+    def _createDropDownMenu(self):
+        #Create a dropdown menu function
+        dropDownMenu = QComboBox("Veuillez choisir un port", self)
+        self.addItems(["Port Com", "Port USB"]) 
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     fenetre = Fenetre_principale()
