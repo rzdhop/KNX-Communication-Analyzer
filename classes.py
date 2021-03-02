@@ -18,6 +18,7 @@ class CTrameKNX:
             self.LG = ""
             self.Data = ""
             self.securite = ""
+            self.acquittement = ""
         pass
 
     def traitement(self):
@@ -34,8 +35,9 @@ class CTrameKNX:
             # Parity
             elif(x % 13 == 9):
                 parity += int(self.trameBruteKNX[x])
-                if not (parity % 2):
-                    total += champ
+                total = champ + total
+                # if not (parity % 2):
+                #     total = champ + total
             # 1 Stop and 2 Pause
             elif(x % 13 == 10 or x % 13 == 11 or x % 13 == 12):
                 pass
@@ -50,11 +52,13 @@ class CTrameKNX:
 
     def CalculDesChamps(self):
         self.octetControle = self.trameKNX[:8]
-        self.adresseSoucre = self.trameKNX[8:16]
-        self.adresseDestinataire = self.trameKNX[16:24]
-        self.CR = self.trameKNX[24:32]
-        self.LG = self.trameKNX[32:40]
-        self.securite = self.trameKNX[-8:]
+        self.adresseSoucre = self.trameKNX[8:24]
+        self.adresseDestinataire = self.trameKNX[24:40]
+        self.typeCast = self.trameKNX[40:41]
+        self.CR = self.trameKNX[41:44]
+        self.LG = self.trameKNX[44:48]
+        self.securite = self.trameKNX[-16:-8]
+        self.acquittement = self.trameKNX[-8:]
 
         # Part of octectControle
         if(self.octetControle[2] == "0"):
@@ -76,7 +80,24 @@ class CTrameKNX:
         elif(self.octetControle[4] == "1" and self.octetControle[5] == "1"):
             print('Priority Low')
 
-        # self.Data = self.trameKNX[] a faire en deriner en fonction de LG
+        if(self.typeCast == 0):
+            print('Unicast')
+        else:
+            print('Multicast')
+
+        # faire les données
+        self.Data = self.trameKNX[48:48+8*(int(self.LG)+1)]
+
+        # somme de tout
+        # somme += self.trameKNX[::]
+        # somme foreach donnée
+
+        if(hex(int(self.acquittement, 2)) == "0xcc"):
+            print('ACK')
+        elif(hex(int(self.acquittement, 2)) == "0x0c"):
+            print('NAK')
+        else:
+            print('BUSY')
 
     def calculerChecksum(self):
         calcul = 1 + 1
