@@ -56,6 +56,14 @@ class Fenetre_principale(QMainWindow):
         dropDownMenu = QComboBox("Veuillez choisir un port", self)
         self.addItems(["Port Com", "Port USB"]) 
 
+    def _onClicked(self, val):
+        #Check if any item is selected or not 
+        if val == "Choissisez votre port":
+            message = "Vous n'avez rien selectionné"
+        
+        else : 
+            message = "Vous avez selectionné le port" + val 
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -71,20 +79,3 @@ if __name__ == "__main__":
 
 
 
-"""
-def selection_bus():
-    "création du menu délourant qui affiche le bus"
-
-root = QWidget()
-root.resize(400, 400)
-root.setWindowTitle("Analyseur de trames KNX")
-"création de l'icône de la fenêtre"
-root.setWindowIcon(QtGui.QIcon("KNX LOGO.jpg"))
-
-#création d'un bouton test 
-button = QPushButton("Cliquer ici", root)
-
-root.show()
-
-sys.exit(app.exec_())
-"""
