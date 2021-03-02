@@ -18,3 +18,4 @@ def driverCap(userPort,nbBytes = 16):
 
 
 print(driverCap('COM1',16))
+l
