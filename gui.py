@@ -38,6 +38,7 @@ class Fenetre_principale(QMainWindow):
         #self.comboBox.addItem("Example")
         combo = QComboBox(self)
         combo.addItems(["Veuillez choisir un port", "Port 1", "Port 2"])
+        combo.setGeometry(QRect(40, 40, 200, 31))
         combo.move(50, 50)
 
         self.qlabel = QLabel(self)
@@ -48,24 +49,24 @@ class Fenetre_principale(QMainWindow):
 
     def _createToolBars(self):
         #Creating a toolbar function
-        fileToolBar = self.addToolBar("File")
+        fileToolBar = self.addToolBar("Fichier")
         # Using a QToolBar object
-        editToolBar = QToolBar("Edit", self) 
+        editToolBar = QToolBar("Édition", self) 
         self.addToolBar(editToolBar)
         # Using a QToolBar object and a toolbar area
-        helpToolBar = QToolBar("Help", self)
+        helpToolBar = QToolBar("Aide", self)
         self.addToolBar(Qt.LeftToolBarArea, helpToolBar)
 
     def _createMenuBar(self):
         #Create a menubar function
         menuBar = self.menuBar()
         # Creating menus using a QMenu object
-        fileMenu = QMenu("&File", self)
+        fileMenu = QMenu("&Fichier", self)
         menuBar.addMenu(fileMenu)
         # Creating menus using a title
-        editMenu = menuBar.addMenu("&Edit")
+        editMenu = menuBar.addMenu("&Édition")
         #helpMenu = menuBar.addMenu("&Help")
-        helpMenu = menuBar.addMenu(QIcon(""), "&Help")
+        helpMenu = menuBar.addMenu(QIcon(""), "&Aide")
 
     def _onChanged(self, text):
         self.qlabel.setText(text)
