@@ -28,6 +28,23 @@ class Fenetre_principale(QMainWindow):
         self.setCentralWidget(self.centralWidget)
         self._createMenuBar()
         self._createToolBars()
+        #self._createDropDownMenu()
+        #self.comboBox = QComboBox()
+        #self.comboBox.setGeometry(QRect(40, 40, 491, 31))
+        #self.comboBox.setObjectName(("comboBox"))
+        #self.comboBox.addItem("PyQt")
+        #self.comboBox.addItem("Qt")
+        #self.comboBox.addItem("Python")
+        #self.comboBox.addItem("Example")
+        combo = QComboBox(self)
+        combo.addItems(["Veuillez choisir un port", "Port 1", "Port 2"])
+        combo.move(50, 50)
+
+        self.qlabel = QLabel(self)
+        self.qlabel.move(50,15)
+        self.qlabel.setAlignment(Qt.AlignHCenter)
+        #combo.activated[str].connect(self.onChanged)      
+
 
     def _createToolBars(self):
         #Creating a toolbar function
@@ -50,20 +67,26 @@ class Fenetre_principale(QMainWindow):
         #helpMenu = menuBar.addMenu("&Help")
         helpMenu = menuBar.addMenu(QIcon(""), "&Help")
 
+    def _onChanged(self, text):
+        self.qlabel.setText(text)
+        self.qlabel.adjustSize()
 
-    def _createDropDownMenu(self):
+
+
+    #def _createDropDownMenu(self):
         #Create a dropdown menu function
-        dropDownMenu = QComboBox("Veuillez choisir un port", self)
-        self.addItems(["Port Com", "Port USB"]) 
-
-    def _onClicked(self, val):
+        #dropDownMenu = self.QComboBox("Veuillez choisir un port")
+        #self.addItems(["Port Com", "Port USB"]) 
+       
+    #def _onClicked(self, val):
         #Check if any item is selected or not 
-        if val == "Choissisez votre port":
-            message = "Vous n'avez rien selectionné"
+        #if val == "Choissisez votre port":
+         #   message = "Vous n'avez rien selectionné"
         
-        else : 
-            message = "Vous avez selectionné le port" + val 
+        #else : 
+         #   message = "Vous avez selectionné le port" + val 
 
+        #self.msg"""
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
