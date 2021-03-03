@@ -100,5 +100,30 @@ class CTrameKNX:
             print('BUSY')
 
     def calculerChecksum(self):
-        calcul = 1 + 1
-        return calcul   # return a char
+        tab = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        for counter, value in enumerate(self.trameKNX[:-16]):
+            if(counter % 8 == 0):
+                tab[0] += int(value)
+            elif(counter % 8 == 1):
+                tab[1] += int(value)
+            elif(counter % 8 == 2):
+                tab[2] += int(value)
+            elif(counter % 8 == 3):
+                tab[3] += int(value)
+            elif(counter % 8 == 4):
+                tab[4] += int(value)
+            elif(counter % 8 == 5):
+                tab[5] += int(value)
+            elif(counter % 8 == 6):
+                tab[6] += int(value)
+            elif(counter % 8 == 7):
+                tab[7] += int(value)
+
+        print(tab)
+
+        for counter, value in enumerate(self.securite):
+            if not(int(value) + tab[counter] % 2):
+                return False
+
+        return True
