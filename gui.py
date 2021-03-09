@@ -52,7 +52,7 @@ class Fenetre_principale(QMainWindow):
         self.qlabel = QLabel(self)
         self.qlabel.move(50,15)
         self.qlabel.setAlignment(Qt.AlignHCenter)
-            #combo.activated[str].connect(self.onChanged)      
+              
 
     def _createToolBars(self):
         #Creating a toolbar function
@@ -79,11 +79,9 @@ class Fenetre_principale(QMainWindow):
     def _openNewWindow(self): 
         button = QPushButton("Cliquez ici", self)
         button.move(275,50)
-        #button.setToolTip("Appuyez ici pour pouvoir quitter cette fenêtre")
         button.setToolTip("Appuyez ici pour pouvoir afficher les trames")
-        #button.clicked.connect(quit)
         button.clicked.connect(self._secondWindow)
-        #button.connect(button, QtCore.PYQT_SIGNAL) PYQT4/ne marche pas 
+         
 
     def _onChanged(self, text):
         self.qlabel.setText(text)
@@ -91,8 +89,9 @@ class Fenetre_principale(QMainWindow):
 
     def _secondWindow(self):
         self.f = Fenetre_secondaire()
+        self.f.hide()
         self.f.show()
-        self.hide()
+        
 
 
 
