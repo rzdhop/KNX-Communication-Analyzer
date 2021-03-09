@@ -10,6 +10,15 @@ from PyQt5.QtGui import *
 
 """app = QApplication(sys.argv)"""
 
+class Fenetre_secondaire(QMainWindow): #Class for the second window
+    #def __init__(self, parent = None): 
+    def __init__(self):
+        #super()._init_(parent)
+        super().__init__()
+    #Cette fenêtre sera celle où seront affichées les trames 
+        self.setWindowTitle("Analyseur de trames KNX")
+        self.resize(400,200)
+        print("Ici seront affichées les trames")
 
 
 class Fenetre_principale(QMainWindow):
@@ -28,24 +37,22 @@ class Fenetre_principale(QMainWindow):
         self.setCentralWidget(self.centralWidget)
         self._createMenuBar()
         self._createToolBars()
-        #self._createDropDownMenu()
-        #self.comboBox = QComboBox()
-        #self.comboBox.setGeometry(QRect(40, 40, 491, 31))
-        #self.comboBox.setObjectName(("comboBox"))
-        #self.comboBox.addItem("PyQt")
-        #self.comboBox.addItem("Qt")
-        #self.comboBox.addItem("Python")
-        #self.comboBox.addItem("Example")
-        combo = QComboBox(self)
-        combo.addItems(["Veuillez choisir un port", "Port 1", "Port 2"])
-        combo.setGeometry(QRect(40, 40, 200, 31))
-        combo.move(50, 50)
+        self._createCombobox()
+        self._openNewWindow()
+        self._secondWindow()
+        
 
+
+    def _createCombobox(self):
+        combo = QComboBox(self)
+        combo.setGeometry(QRect(40, 40, 200, 31))
+        liste = ["Veuillez choisir un port", "Port 1", "Port 2"]
+        combo.addItems(liste)
+        combo.move(50, 50)
         self.qlabel = QLabel(self)
         self.qlabel.move(50,15)
         self.qlabel.setAlignment(Qt.AlignHCenter)
-        #combo.activated[str].connect(self.onChanged)      
-
+            #combo.activated[str].connect(self.onChanged)      
 
     def _createToolBars(self):
         #Creating a toolbar function
@@ -58,6 +65,7 @@ class Fenetre_principale(QMainWindow):
         self.addToolBar(Qt.LeftToolBarArea, helpToolBar)
 
     def _createMenuBar(self):
+
         #Create a menubar function
         menuBar = self.menuBar()
         # Creating menus using a QMenu object
@@ -68,17 +76,38 @@ class Fenetre_principale(QMainWindow):
         #helpMenu = menuBar.addMenu("&Help")
         helpMenu = menuBar.addMenu(QIcon(""), "&Aide")
 
+    def _openNewWindow(self): 
+        button = QPushButton("Cliquez ici", self)
+        button.move(275,50)
+        #button.setToolTip("Appuyez ici pour pouvoir quitter cette fenêtre")
+        button.setToolTip("Appuyez ici pour pouvoir afficher les trames")
+        #button.clicked.connect(quit)
+        button.clicked.connect(self._secondWindow)
+        #button.connect(button, QtCore.PYQT_SIGNAL) PYQT4/ne marche pas 
+
     def _onChanged(self, text):
         self.qlabel.setText(text)
         self.qlabel.adjustSize()
 
+    def _secondWindow(self):
+        self.f = Fenetre_secondaire()
+        self.f.show()
+        self.hide()
 
 
-    #def _createDropDownMenu(self):
-        #Create a dropdown menu function
-        #dropDownMenu = self.QComboBox("Veuillez choisir un port")
-        #self.addItems(["Port Com", "Port USB"]) 
-       
+
+def main() : 
+    app = QApplication(sys.argv)
+    fenetre = Fenetre_principale()
+    fenetre.show()
+    sys.exit(app.exec_())
+
+        
+if __name__ == "__main__":
+    main()
+
+
+ 
     #def _onClicked(self, val):
         #Check if any item is selected or not 
         #if val == "Choissisez votre port":
@@ -88,12 +117,6 @@ class Fenetre_principale(QMainWindow):
          #   message = "Vous avez selectionné le port" + val 
 
         #self.msg"""
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    fenetre = Fenetre_principale()
-    fenetre.show()
-    sys.exit(app.exec_())
 
 
 
