@@ -43,7 +43,7 @@ class CTrameKNX:
         # self.CRLG = bin(int(self.trameKNX[10:12], 16))[2:]
         self.CRLG = bin(int(self.trameKNX[10:12], 16))[2:].zfill(len(self.trameKNX[10:12]) * 4)
         self.Cast = self.CRLG[0:1]
-        self.CR = self.CRLG[1:4]
+        self.CR = int(self.CRLG[1:4], 2)
         self.LG = self.CRLG[4:8]
         self.Data = self.trameKNX[12:12+2*(int(self.LG, 2)+1)]
         self.securite = self.trameKNX[-4:-2]
