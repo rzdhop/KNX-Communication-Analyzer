@@ -64,11 +64,3 @@ class driverKNX:
                 break                                                                                           #
                        
         return telegKNX
-
-
-
-                
-
-
-   
-
