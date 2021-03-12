@@ -18,6 +18,7 @@ class driverKNX:
 
         self.getListesPorts() #Permet de lancer au démarrage sans l'appeler
         self.findKnxPort()
+        self.getKNX()
 
     
     def getListesPorts(self):
@@ -46,21 +47,23 @@ class driverKNX:
 
         self.dataKNX = binascii.hexlify(capKNX.readline(),'-')# ici je vais lire les données sur le port et les mettres en hexa en séparant par -
         
-        return self.dataKNX
+        return self.dataKNX.decode('utf-8')
 
     def getComPort(self):
 
         return self.portCOM
 
-    def telegKNX(self):
-        splitDataKNX, splitKNXReturn,telegKNX = [], [], []
+    def telegKNX(self, dataKNXsave):
+        splitDataKNX, result = [], []
 
-        splitDataKNX = self.dataKNX.split('-') #Ici je sépare dataKNX à chaques -     
+        splitDataKNX = dataKNXsave.split('-') #Ici je sépare dataKNX à chaques -    
 
         for i in range(len(splitDataKNX)):                                                                      #
-            splitKNXReturn += splitDataKNX[i] #Ajout de splitDataKNX[i] dans splitKNXReturn[i]                  #                                                                                            # Cette partie permet de ne récupérer que un Télègrame KNX
-            if splitDataKNX[i] == '0c' or splitDataKNX[i] == 'c0' or splitDataKNX[i] == 'cc':                   # Je vérifie tout les caractères de fin d'un télégrammes KNX                 
-                telegKNX = ''.join(map(str,splitKNXReturn))                                                     #transformation du tableau en chaine de str                                                                                               #
-                break                                                                                           #
-                       
-        return telegKNX
+            result += splitDataKNX[i]                                                                           #Ajout de splitDataKNX[i] dans result[i]   
+        #                                                                                                       # Cette partie permet de ne récupérer que un Télègrame KNX
+            if splitDataKNX[i] == '0c' or splitDataKNX[i] == 'c0' or splitDataKNX[i] == 'cc':                   # Je vérifie tout les caractères de fin d'un télégrammes KNX                                    
+                break  
+                                                                                                     
+        result = ''.join(map(str,result))                                                                       #transformation du tableau en chaine de str    
+                                                                                                                                                                                                               #
+        return result
