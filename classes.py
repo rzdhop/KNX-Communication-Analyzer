@@ -32,6 +32,9 @@ class CTrameKNX:
             self.typeCast = ""
             self.typeAcquittement = ""
 
+            self.traitement()
+            self.CalculDesChamps()
+
     def traitement(self):
         self.trameKNX = self.trameBruteKNX.upper()
 
