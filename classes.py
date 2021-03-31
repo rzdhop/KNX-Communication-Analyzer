@@ -1,4 +1,9 @@
-# Guillaume
+'''
+Created on 03-03-2021
+
+@author: Guillaume
+'''
+
 import driver
 from logs import logs
 
@@ -49,8 +54,9 @@ class CTrameKNX:
         self.CR = int(self.CRLG[1:4], 2)
         self.LG = self.CRLG[4:8]
         self.Data = self.trameKNX[12:12+2*(int(self.LG, 2)+1)]
-        self.securite = self.trameKNX[-4:-2]
-        self.acquittement = self.trameKNX[-2:]
+        self.securite = self.trameKNX[12+2*(int(self.LG, 2)+1):12+2*(int(self.LG, 2)+2)]
+        # self.securite = self.trameKNX[-4:-2]
+        # self.acquittement = self.trameKNX[-2:]
 
         # Part of octectControle
         if(self.octetControle[0] == "1"):
@@ -80,12 +86,12 @@ class CTrameKNX:
         else:
             self.typeCast = 'Multicast'
 
-        if(self.acquittement == "CC"):
-            self.typeAcquittement = 'ACK'
-        elif(self.acquittement == "0C"):
-            self.typeAcquittement = 'NAK'
-        else:
-            self.typeAcquittement = 'BUSY'
+        # if(self.acquittement == "CC"):
+        #     self.typeAcquittement = 'ACK'
+        # elif(self.acquittement == "0C"):
+        #     self.typeAcquittement = 'NAK'
+        # else:
+        #     self.typeAcquittement = 'BUSY'
 
     def calculerChecksum(self):
         tab = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -121,7 +127,7 @@ class CTrameKNX:
         return True
 
     def writeInfo(self):
-        txt = "Info de trame"
+        txt = "Info de trame\nControle: {0}\nType du telegram: {1}\nEmission: {2}\nPriority: {3}\nControle: {4}\nAdresse Des: {5}\nAdresse Sou: {6}\nCast: {7}\nCR: {8}\nLG: {8}\nData: {9}\nSecurité: {10}\n".format(self.octetControle, self.typeFrame, self.typeEmision, self.typePriority, self.adresseDestinataire, self.adresseSoucre, self.typeCast, self.CR, self.LG, self.Data, self.securite)
         log.info(txt)
 
 # # Guillaume
