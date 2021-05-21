@@ -1,4 +1,9 @@
-# Guillaume
+'''
+Created on 03-03-2021
+
+@author: Guillaume
+'''
+
 import driver
 from logs import logs
 
@@ -9,10 +14,8 @@ log = logs()
 class CTrameKNX:
     def __init__(self, trameBruteKNX: str = None):
         if trameBruteKNX == None:
-            # Simple constructor
             print("🤷‍♂️ Yes But Why ?")
         else:
-            # Constructor overload with the trame
             self.trameBruteKNX = trameBruteKNX
             self.trameKNX = ""
             self.octetControle = ""
@@ -31,14 +34,12 @@ class CTrameKNX:
             self.typePriority = ""
             self.typeCast = ""
             self.typeAcquittement = ""
+            self.Checksum = ""
 
-            self.traitement()
             self.CalculDesChamps()
 
-    def traitement(self):
-        self.trameKNX = self.trameBruteKNX.upper()
-
     def CalculDesChamps(self):
+        self.trameKNX = self.trameBruteKNX.upper()
         self.octetControle = self.trameKNX[:2]
         self.adresseSoucre = self.trameKNX[2:6]
         self.adresseDestinataire = self.trameKNX[6:10]
@@ -49,8 +50,9 @@ class CTrameKNX:
         self.CR = int(self.CRLG[1:4], 2)
         self.LG = self.CRLG[4:8]
         self.Data = self.trameKNX[12:12+2*(int(self.LG, 2)+1)]
-        self.securite = self.trameKNX[-4:-2]
-        self.acquittement = self.trameKNX[-2:]
+        self.securite = self.trameKNX[12+2*(int(self.LG, 2)+1):12+2*(int(self.LG, 2)+2)]
+        # self.securite = self.trameKNX[-4:-2]
+        # self.acquittement = self.trameKNX[-2:]
 
         # Part of octectControle
         if(self.octetControle[0] == "1"):
@@ -80,12 +82,17 @@ class CTrameKNX:
         else:
             self.typeCast = 'Multicast'
 
-        if(self.acquittement == "CC"):
-            self.typeAcquittement = 'ACK'
-        elif(self.acquittement == "0C"):
-            self.typeAcquittement = 'NAK'
-        else:
-            self.typeAcquittement = 'BUSY'
+        # self.CR = int(str(self.CR), 2)
+        self.LG = int(str(self.LG), 2)
+
+        # if(self.acquittement == "CC"):
+        #     self.typeAcquittement = 'ACK'
+        # elif(self.acquittement == "0C"):
+        #     self.typeAcquittement = 'NAK'
+        # else:
+        #     self.typeAcquittement = 'BUSY'
+
+        self.Checksum = self.calculerChecksum()
 
     def calculerChecksum(self):
         tab = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -110,8 +117,6 @@ class CTrameKNX:
             elif(counter % 8 == 7):
                 tab[7] += int(value)
 
-        print(tab)
-
         sec = (bin(int(self.securite, 16))[2:]).zfill(len(self.securite) * 4)
 
         for counter, value in enumerate(sec):
@@ -121,8 +126,8 @@ class CTrameKNX:
         return True
 
     def writeInfo(self):
-        txt = "Info de trame"
-        log.info(txt)
+        txt = "Info de trame\nControle: {0}\nType du telegram: {1}\nEmission: {2}\nPriority: {3}\nAdresse Sou: {4}\nAdresse Des: {5}\nCast: {6}\nCR: {7}\nLG: {8}\nData: {9}\nSecurité: {10}\nChecksum: {11}\n"
+        log.info(txt.format(self.octetControle, self.typeFrame, self.typeEmision, self.typePriority, self.adresseSoucre, self.adresseDestinataire, self.typeCast, self.CR, self.LG, self.Data, self.securite, self.calculerChecksum()))
 
 # # Guillaume
 # import driver
