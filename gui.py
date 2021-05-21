@@ -4,7 +4,6 @@ from tkinter import *
 from tkinter import ttk 
 from PIL import Image, ImageTk 
 from webbrowser import *
-from affitrame import *
 
 #Fenêtre principale 
 class Fenetre_principale(Frame) :
