@@ -6,6 +6,9 @@ from PIL import Image, ImageTk
 from webbrowser import *
 import webbrowser
 from affitrame import *
+from classes import CTrameKNX
+from driverKNX import driverKNX
+
 
 #Fenêtre principale 
 class Fenetre_principale(Frame) :
@@ -41,7 +44,36 @@ class Fenetre_principale(Frame) :
         menuAPropos.add_command(label="Voir notre Github", command = self.github)
         menu.add_cascade(label="À Propos", menu=menuAPropos)
 
-        #Création de la Combobox
+
+        driver = driverKNX()
+
+        while 1:  # Sa boucle la capture à l'infini
+
+            knxBck = driver.getKNX()
+
+            if len(knxBck) != 0:  # Sa vérifie si jamais knxBack n'est pas vide et on quitte la boucle
+
+                test = CTrameKNX(knxBck)
+                
+
+
+                print(test.octetControle)
+                print(test.typePriority)
+                print(test.typeEmision)
+                print(test.typeFrame)
+                print(test.adresseDestinataire)
+                print(test.adresseSoucre)
+                print(test.typeCast)
+                print(test.CRLG)
+                print(test.CR)
+                print(test.LG)
+                print(test.Data)
+                print(test.securite)
+                print(test.Checksum)
+                test.writeInfo()
+
+
+                del knxBck
 
         self._initUI()
 
@@ -119,26 +151,7 @@ class Fenetre_principale(Frame) :
 #Création de la fonction qui permettra à l'utilisateur d'aller regarder le Github 
 
     def github(self) :
-        #print("Afficher notre GitHub")
-
-        #fengit = Toplevel(self)
-        #self.pack(fill = BOTH)
-
-        #text = Label(fengit, text = "Voici le lien de notre Github", font =("Impact", 12))
-        #text.pack()
-
-        #global git_img
-        #git_img = Image.open("github_PNG19.png")
-        #git_img = git_img.resize((150,150))
-        #git_img = ImageTk.PhotoImage(git_img)
         
-        #git_logo = Label(fengit, image = git_img)
-        #git_logo.pack()
-
-        #Création d'un lien hypertexte 
-
-        #lien = Label(fengit, text = r"https://github.com/GuillaumeDorschner/KNX-Communication-Analyzer", fg = "blue", cursor = "arrow")
-        #lien.pack()
         link = webbrowser.open('https://github.com/GuillaumeDorschner/KNX-Communication-Analyzer')
 
         
@@ -201,7 +214,7 @@ class Fenetre_principale(Frame) :
         listinfo.pack(side = LEFT)
        
 
-    def startAnalyse(self):
+    def startAnalyse(self, true):
         print("Lancer l'analyseur de trames")
         #can.create_text(200, 20, text = TrameKNX(trame1))
     
