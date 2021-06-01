@@ -42,15 +42,12 @@ class driverKNX:
                 raise Exception('Erreur aucun port trouver')
 
     def getKNX(self):
-
         # ici j'ouvre et configure le port série, en lui précisant le port sélectionner, puis le taux de bauds pour le port et je lui défini un timeout
-        capKNX = serial.Serial(self.portCOM, baudrate=9600, timeout=1,
-                               bytesize=serial.EIGHTBITS, stopbits=serial.STOPBITS_TWO)
+        capKNX = serial.Serial(self.portCOM, baudrate=9600, timeout=0.2,
+                               bytesize=serial.EIGHTBITS, stopbits=serial.STOPBITS_ONE)
 
-        capKNX.flushInput()  # Clear du buffer Input
-        capKNX.flushOutput()  # Clear du buffer Output
-
-        # ici je vais lire les données sur le port et les mettres en hexa en séparant par -
+        capKNX.flushOutput()
+        
         self.dataKNX = binascii.hexlify(capKNX.readline())
 
         return self.dataKNX.decode('utf-8')
