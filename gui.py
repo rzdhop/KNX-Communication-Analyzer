@@ -1,14 +1,17 @@
 # Kwin
 
+# Kwin
+
+import threading
 from tkinter import *
 from tkinter import ttk 
 from PIL import Image, ImageTk 
-from webbrowser import *
 import webbrowser
-from affitrame import *
-from classes import CTrameKNX
-from driverKNX import driverKNX
 
+from serial.tools.list_ports_windows import NULL
+from classes import CTrameKNX
+from driver import driverKNX 
+from threading import *
 
 #Fenêtre principale 
 class Fenetre_principale(Frame) :
@@ -28,62 +31,33 @@ class Fenetre_principale(Frame) :
         self.parent.config(menu=menu)
 
         menuOption = Menu(menu)
-        
-        cblog = IntVar()
-        #menuOption.add_checkbutton(label = "Afficher les logs", variable = cblog, command = self.log)
         menuOption.add_command(label = "Afficher les logs", command = self.log)
-
-
-        cbsombre = IntVar()
-        menuOption.add_checkbutton(label = "Mode sombre", variable = cbsombre, command = self.darkmode)
         menuOption.add_command(label = "Quitter", command = self.exitProgram)
         menu.add_cascade(label = "Options", menu = menuOption)
 
         menuAPropos = Menu(menu) 
-        menuAPropos.add_command(label="Voir de l'aide", command = self.aide)
         menuAPropos.add_command(label="Voir notre Github", command = self.github)
         menu.add_cascade(label="À Propos", menu=menuAPropos)
 
+        self.state = False
 
-        driver = driverKNX()
+        self.driver = driverKNX()
 
-        while 1:  # Sa boucle la capture à l'infini
+        self.tab = []
 
-            knxBck = driver.getKNX()
-
-            if len(knxBck) != 0:  # Sa vérifie si jamais knxBack n'est pas vide et on quitte la boucle
-
-                test = CTrameKNX(knxBck)
-                
-
-
-                print(test.octetControle)
-                print(test.typePriority)
-                print(test.typeEmision)
-                print(test.typeFrame)
-                print(test.adresseDestinataire)
-                print(test.adresseSoucre)
-                print(test.typeCast)
-                print(test.CRLG)
-                print(test.CR)
-                print(test.LG)
-                print(test.Data)
-                print(test.securite)
-                print(test.Checksum)
-                test.writeInfo()
-
-
-                del knxBck
 
         self._initUI()
+
+        global th1 
+        th1 = threading.Thread(target = self.process_capture)
+        
+        listrame.bind("<Double-1>", self.showInfo)   
 
     def exitProgram(self):
         exit()
 
-    def affich(self):
-        lab = Label(fenlog, text = "LOGS")
-        lab.pack()
 
+    #Création de la fonction qui servira d'afficher les fichiers log
     def log(self) :
         print("Afficher les logs")
         global fenlog 
@@ -93,59 +67,8 @@ class Fenetre_principale(Frame) :
         text = Label(fenlog, text = "Voici la fenêtre où seront affichés les logs")
         text.pack()
 
-        button = Button(fenlog, text = "Afficher les logs", command = self.affich)
-        button.pack()
+    
 
-        
-        #cblog.set(0)
-
-        #if cblog.get() == 1 : 
-            #fenlog = Toplevel(self)
-            #self.pack(fill = BOTH)
-
-            #text = Label(fenlog, text = "Voici la fenêtre où seront affichés les logs")
-            #text.pack()
-
-    def descriptif(self): 
-        canv = Canvas(fenaide, width = 200, height = 200, background = "white")
-        canv.create_text()
-
-    def equipe(self):
-        canv = Canvas(fenaide, width = 200, height = 200, background = "white")
-        canv.create_text()
-
-    def aide(self): 
-
-        global fenaide
-        fenaide = Toplevel(self)
-        self.pack(fill = BOTH)
-        fenaide.title("Aide")
-        text = Label(fenaide, text = "Bienvenue sur l'aide de notre analyseur de trames KNX")
-        text.pack()
-
-        But1 = Button(fenaide, text = "Voir notre Github", command = self.github)
-        But1.pack()
-
-        vide = Label(fenaide, text = " ")
-        vide.pack()
-
-        But2 = Button(fenaide, text = "Voir le descriptif", command = self.descriptif)
-        But2.pack()
-
-        vide = Label(fenaide, text = " ")
-        vide.pack()
-
-        But3 = Button(fenaide, text = "En savoir plus sur l'équipe", command = self.equipe)
-        But3.pack()
-
-        vide = Label(fenaide, text = " ")
-        vide.pack()
-
-        
-    def darkmode(self) :
-        print("Afficher le mode sombre")
-        self.configure(bg = 'black')
-        #self.vide.config(bg = 'black')
 
 
 #Création de la fonction qui permettra à l'utilisateur d'aller regarder le Github 
@@ -157,7 +80,7 @@ class Fenetre_principale(Frame) :
         
         
 
-#Fonction pour les widgets de la première fenêtre 
+#Fonction pour les widgets de la fenêtre principale de l'analyseur de trames
     def _initUI(self):
 
         self.pack(fill = BOTH)
@@ -167,68 +90,166 @@ class Fenetre_principale(Frame) :
         vide.pack()
 
 
-        select_port = ttk.Combobox(self, values = ["Veuillez choisir un port", "Port COM"])
+        valeur_port = self.driver.getComPort()
+        select_port = ttk.Combobox(self, state = "readonly", values = valeur_port)
+        select_port.pack()
+
+        
+
         select_port.pack()
 
         vide = Label(self, text = " ")
         vide.pack()
 
-        #global can
-        #can = Canvas(self, width = 400, height = 400, background = "white")
-        #can.pack()
+        #Frame pour afficher les deux listbox (affichage de trames)
+        global FrameWidgets
+        FrameWidgets = Frame(self)
+        FrameWidgets.pack()
 
-        global listrame 
-        listrame = Listbox(self, width = 105, height = 20)
-        listrame.pack()
+
+        #Frame pour contenir les boutons Start, Pause et WriteInfo
+        global Frameboutons
+        Frameboutons = Frame(self)
+        Frameboutons.pack(pady = 10)
+        
+       
 
         global start_img
         start_img = Image.open("Start_logo.png")
         start_img = start_img.resize((50,50))
-        #start_img = start_img.resize((25,25), Image.ANTIALIAS)
         start_img = ImageTk.PhotoImage(start_img)
 
 
         
         global pause_img
-        pause_img = Image.open("pause-button-clipart-4.jpg")
+        pause_img = Image.open("Pause_logo_2.png")
         pause_img = pause_img.resize((50,50))
-        #pause_img = pause_img.resize((25,25), Image.ANTIALIAS)
         pause_img = ImageTk.PhotoImage(pause_img)
+
+
+        global writeinfo_img
+        writeinfo_img = Image.open("ecriture-log.png")
+        writeinfo_img = writeinfo_img.resize((50,50))
+        writeinfo_img = ImageTk.PhotoImage(writeinfo_img)
+
+        global listrame 
+        listrame = Listbox(FrameWidgets, width = 105)
+        listrame.pack(side = LEFT, padx = 20)
+
+        global listinfo
+        listinfo = Listbox(FrameWidgets, width = 40, height= 15)
+        listinfo.configure(font=("Courier", 16, "italic"))
+
         
 
-        boutonStart = Button(self, text = "Démarrer", image = start_img, relief = "flat", command = self.startAnalyse)
-        #boutonStart.pack(side = BOTTOM)
-        boutonStart.pack(side = LEFT)
+        boutonStart = Button(Frameboutons, text = "Démarrer", image = start_img, relief = "flat", command = self.startAnalyse)
+        boutonStart.pack(side = LEFT, padx = 20)
+        
 
-        boutonPause = Button(self, text = "Pause", image = pause_img, relief = "flat", command = self.stopAnalyse)
-        #boutonPause.pack()
-        boutonPause.pack(side = RIGHT)
+       
+        boutonPause = Button(Frameboutons, text = "Pause", image = pause_img, relief = "flat", command = self.stopAnalyse)
+        boutonPause.pack(side = RIGHT, padx = 20)
 
-
-    def writeinfo(self, listrame): 
-
-        #feninfo = Toplevel(self)
-        #self.pack(fill = BOTH)
-        listinfo = Listbox(self, width = 40, height = 20)
-        #listinfo.pack(side = TOP, anchor = NW)
-        listinfo.pack(side = LEFT)
+        #boutonWriteInfo = Button(Frameboutons, text = "Write Info", image = writeinfo_img, relief = "flat")
+        #boutonWriteInfo.pack(side= RIGHT, padx= 30)
        
 
-    def startAnalyse(self, true):
-        print("Lancer l'analyseur de trames")
-        #can.create_text(200, 20, text = TrameKNX(trame1))
-    
-        listrame.insert("end", trame1)
+    #Montre les infos de la trame
+    def showInfo(self, listrame): 
 
-        listrame.bind("<Double-1>", self.writeinfo)
+                  
+        listinfo.pack(side = RIGHT, padx = 20)
+        listinfo.delete(0,"end")
+
+        octetControle = "Octet de Contrôle :  " + str(self.test.octetControle)
+        listinfo.insert("end", octetControle)
+
+        typePriorite = "Type de priorité : " +  str(self.test.typePriority)
+        listinfo.insert("end", typePriorite)
+
+        typeEmission = "Type d'émission : " + str(self.test.typeEmision)
+        listinfo.insert("end", typeEmission)
+
+        typeFrame = "Type de trame : " + str(self.test.typeFrame)
+        listinfo.insert("end", typeFrame)
+
+        adresseDestinataire = "Adresse destinataire : " + str(self.test.adresseDestinataire)
+        listinfo.insert("end", adresseDestinataire)
+
+        adresseSource = "Adresse source : " + str(self.test.adresseSoucre)
+        listinfo.insert("end", adresseSource)
         
-       
+        typeCast = "Type de Cast : " + str(self.test.typeCast)
+        listinfo.insert("end", typeCast)
 
-    def stopAnalyse(self, listrame):
-        print("Stopper l'analyseur de trames")
+        lCRLG = "CRLG : " + str(self.test.CRLG)
+        listinfo.insert("end", lCRLG)
 
-        listrame.clear()
+        lCR = "CR : " + str(self.test.CR)
+        listinfo.insert("end", lCR)
+
+        lLG = "LG : " + str(self.test.LG)
+        listinfo.insert("end", lLG)
+
+        Data = "Data : " + str(self.test.Data)
+        listinfo.insert("end", Data)
+
+        Securite = "Sécurité : " + str(self.test.securite)
+        listinfo.insert("end", Securite)
+
+        Checksum = "Checksum : " + str(self.test.Checksum)
+        listinfo.insert("end", Checksum)
         
+
+    def process_capture(self) :
+        
+        listrame.configure(font=(16))
+        self.tab = []
+
+        knxBck = NULL
+
+
+        while True:  # Sa boucle la capture à l'infini
+
+            knxBck = self.driver.getKNX()
+
+
+            if len(knxBck) != 0:  # Ça vérifie si jamais knxBack n'est pas vide et on quitte la boucle
+
+                self.test = CTrameKNX(knxBck)
+
+                print(knxBck)
+                del knxBck
+
+                print(self.test.adresseDestinataire)
+                self.tab.append(self.test)
+
+
+                
+                for i in range(len(self.tab)):
+                    listrame.delete(0,1)
+                    
+                print(self.tab)
+
+                for i in range(len(self.tab)):
+                    listrame.insert("end", self.tab[i].trameBruteKNX)
+                    
+                    
+
+        
+                    print(self.tab[i].trameBruteKNX)
+
+            listrame.bind("<Double-1>", self.showInfo)
+
+
+    def startAnalyse(self):
+        
+        th1.start()
+        
+
+    def stopAnalyse(self):
+        
+        th1.join(5)
 
         
 def main():
@@ -240,3 +261,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
