@@ -1,14 +1,12 @@
 # Kwin
 
-# Kwin
-
 import threading
 from tkinter import *
 from tkinter import ttk 
 from PIL import Image, ImageTk 
 import webbrowser
 
-from serial.tools.list_ports_windows import NULL
+#from serial.tools.list_ports_windows import NULL
 from classes import CTrameKNX
 from driver import driverKNX 
 from threading import *
@@ -46,6 +44,8 @@ class Fenetre_principale(Frame) :
         self.tab = []
 
         self.histo = []
+
+        self.sauvInfo = []
 
 
         self._initUI()
@@ -161,7 +161,7 @@ class Fenetre_principale(Frame) :
         listrame.configure(font=(16))
         self.tab = []
 
-        knxBck = NULL
+        knxBck = 0
 
         #knxBck.flushInput()
 
@@ -191,19 +191,24 @@ class Fenetre_principale(Frame) :
 
                 
                     listrame.insert("end", self.tab[i].trameBruteKNX)
-                    #listrame.bind("<Double-1>", self.showInfo)
+                    listrame.bind("<Double-1>", self.showInfo)
                     
 
         
                     print(self.tab[i].trameBruteKNX)
 
+            listrame.bind("<<ListboxSelect>>", self.historique)
+                     
+
             
+    def historique(self, event) :
+    #def historique(self, event, listrame) : 
 
-    def historique(self, listrame) : 
-
-        selection = listrame.curselection
+        selection = listrame.curselection()
         print(selection)
- 
+
+
+
         """for i in range(len(self.histo)) : 
 
             if i == selection : 
@@ -218,8 +223,9 @@ class Fenetre_principale(Frame) :
         
 
     def showInfo(self, listrame): 
-        #listinfo = Listbox(FrameWidgets, width = 40, height= 15)
-        #listinfo.configure(font=("Courier", 16, "italic"))
+
+        
+    
 
         #self.listrame.bind("<Double-1>", self.showInfo)
 
@@ -276,12 +282,22 @@ class Fenetre_principale(Frame) :
 
         self.boutonWriteInfo.bind("<Button-1>", self.test.writeInfo)
         self.boutonWriteInfo.pack(side= RIGHT, padx= 30)
-        
+
+        for i,j in range(len(self.sauvInfo)) : 
+
+            self.sauvInfo[i] = 
+
+
+
+
+
+
+
     def startAnalyse(self):
         
         th1.start()
-        #listrame.bind("<Double-1>", self.showInfo)
-        listrame.bind("<Double-1>", self.historique)
+        listrame.bind("<Double-1>", self.showInfo)
+        #listrame.bind("<Double-1>", self.historique)
         
 
     def stopAnalyse(self):
@@ -299,7 +315,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 
 
