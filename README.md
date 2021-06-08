@@ -7,7 +7,7 @@
   ![License](https://img.shields.io/badge/License-MIT-brightgreen)
 </div>
 
-This project is for the BTEC HNO. At the high school of Diderot Paris 🇫🇷.  
+This project is for the BTEC HND. At the high school of Diderot Paris 🇫🇷.  
 
 <h1>🚧 under development 🚧</h1>
 
