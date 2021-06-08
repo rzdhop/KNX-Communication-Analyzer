@@ -115,7 +115,7 @@ class Fenetre_principale(Frame) :
        
 
         global start_img
-        start_img = Image.open("Start_logo.png")
+        start_img = Image.open("./Img/Start_logo.png")
         start_img = start_img.resize((50,50))
         start_img = ImageTk.PhotoImage(start_img)
 
@@ -123,13 +123,13 @@ class Fenetre_principale(Frame) :
         
         global pause_img
         #pause_img = Image.open("pause-button-clipart-4.jpg")
-        pause_img = Image.open("Pause_logo_2.png")
+        pause_img = Image.open("./Img/Pause_logo_2.png")
         pause_img = pause_img.resize((50,50))
         pause_img = ImageTk.PhotoImage(pause_img)
 
 
         global writeinfo_img
-        writeinfo_img = Image.open("ecriture-log.png")
+        writeinfo_img = Image.open("./Img/ecriture-log.png")
         writeinfo_img = writeinfo_img.resize((50,50))
         writeinfo_img = ImageTk.PhotoImage(writeinfo_img)
 
@@ -281,7 +281,23 @@ class Fenetre_principale(Frame) :
 
         self.sauvInfo.append(octetControle, "\n" + typePriorite, "\n" + typeEmission, "\n" + typeFrame, "\n")
 
-     
+        """i = 0
+        for i in range(len(self.sauvInfo)) : 
+
+            self.sauvInfo[0] = octetControle
+            self.sauvInfo[1] = typePriorite
+            self.sauvInfo[2] = typeEmission
+            self.sauvInfo[3] = typeFrame
+            self.sauvInfo[4] = adresseDestinataire
+            self.sauvInfo[5] = adresseSource
+            self.sauvInfo[6] = typeCast
+            self.sauvInfo[7] = lCRLG
+            self.sauvInfo[8] = lCR
+            self.sauvInfo[9] = lLG
+            self.sauvInfo[10] = Data 
+            self.sauvInfo[11] = Securite
+            self.sauvInfo[12] = Checksum"""
+ 
 
 
     def startAnalyse(self):
