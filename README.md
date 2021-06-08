@@ -18,10 +18,14 @@ This project is for the BTEC HNO. At the high school of Diderot Paris 🇫🇷.
 * Logs of Trames and Errors
 
 # Exemple
-Add a image of the GUI
+<div align="center">
+  <img src="https://i.imgur.com/Xh4F5nY.png">
+</div>
 
 # motherboard schematic
-Add schematic
+<div align="center">
+  <img src="https://i.imgur.com/gbP3XVn.png">
+</div>
 
 
 #### 🤠 New to KNX?
