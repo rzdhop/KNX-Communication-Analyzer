@@ -14,7 +14,7 @@ log = logs()
 class CTrameKNX:
     def __init__(self, trameBruteKNX: str = None):
         if trameBruteKNX == None:
-            print("🤷‍♂️ Yes But Why ?")
+            print("You should put the trame in the argument")
         else:
             self.trameBruteKNX = trameBruteKNX
             self.trameKNX = ""
@@ -43,18 +43,13 @@ class CTrameKNX:
         self.octetControle = self.trameKNX[:2]
         self.adresseSoucre = self.trameKNX[2:6]
         self.adresseDestinataire = self.trameKNX[6:10]
-        # probleme est ici au niveau du CR car le data n'est pas bon
-        # self.CRLG = bin(int(self.trameKNX[10:12], 16))[2:]
-        self.CRLG = bin(int(self.trameKNX[10:12], 16))[2:].zfill(len(self.trameKNX[10:12]) * 4)
+        self.CRLG = bin(int(self.trameKNX[10:12], 16))[2:].zfill(8)
         self.Cast = self.CRLG[0:1]
         self.CR = int(self.CRLG[1:4], 2)
-        self.LG = self.CRLG[4:8]
-        self.Data = self.trameKNX[12:12+2*(int(self.LG, 2)+1)]
-        self.securite = self.trameKNX[12+2*(int(self.LG, 2)+1):12+2*(int(self.LG, 2)+2)]
-        # self.securite = self.trameKNX[-4:-2]
-        # self.acquittement = self.trameKNX[-2:]
+        self.LG = int(self.CRLG[4:8], 2)
+        self.Data = self.trameKNX[12:12+2*(self.LG + 1)]
+        self.securite = self.trameKNX[12+2*(self.LG + 1):12+2*(self.LG + 2)]
 
-        # Part of octectControle
         if(self.octetControle[0] == "1"):
             self.typeFrame = 'Extended frame'
             self.typeEmision = 'Repeated'
@@ -82,9 +77,7 @@ class CTrameKNX:
         else:
             self.typeCast = 'Multicast'
 
-        # self.CR = int(str(self.CR), 2)
-        self.LG = int(str(self.LG), 2)
-
+        # we don't do ack
         # if(self.acquittement == "CC"):
         #     self.typeAcquittement = 'ACK'
         # elif(self.acquittement == "0C"):
@@ -117,7 +110,7 @@ class CTrameKNX:
             elif(counter % 8 == 7):
                 tab[7] += int(value)
 
-        sec = (bin(int(self.securite, 16))[2:]).zfill(len(self.securite) * 4)
+        sec = (bin(int(self.securite, 16))[2:]).zfill(8)
 
         for counter, value in enumerate(sec):
             if not(int(value) + tab[counter] % 2):
@@ -126,8 +119,8 @@ class CTrameKNX:
         return True
 
     def writeInfo(self):
-        txt = "Info de trame\nControle: {0}\nType du telegram: {1}\nEmission: {2}\nPriority: {3}\nAdresse Sou: {4}\nAdresse Des: {5}\nCast: {6}\nCR: {7}\nLG: {8}\nData: {9}\nSecurité: {10}\nChecksum: {11}\n"
-        log.info(txt.format(self.octetControle, self.typeFrame, self.typeEmision, self.typePriority, self.adresseSoucre, self.adresseDestinataire, self.typeCast, self.CR, self.LG, self.Data, self.securite, self.calculerChecksum()))
+        txt = "Info de trame\Telegram: {0}\nControle: {1}\nType du telegram: {2}\nEmission: {3}\nPriority: {4}\nAdresse Sou: {5}\nAdresse Des: {6}\nCast: {7}\nCR: {8}\nLG: {9}\nData: {10}\nSecurité: {11}\nChecksum: {12}\n"
+        log.info(txt.format(self.trameKNX, self.octetControle, self.typeFrame, self.typeEmision, self.typePriority, self.adresseSoucre, self.adresseDestinataire, self.typeCast, self.CR, self.LG, self.Data, self.securite, self.calculerChecksum()))
 
 # # Guillaume
 # import driver
